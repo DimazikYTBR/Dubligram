@@ -99,13 +99,10 @@ android {
     }
 
 
-defaultConfig {
+    defaultConfig {
         minSdkVersion 21
         targetSdkVersion 35
-        
-        // ВОТ ЭТА СТРОЧКА ОБЯЗАТЕЛЬНА:
-        applicationId "org.dubligram.messenger" 
-        
+        applicationId "org.dubligram.messenger"
         versionCode 1
         versionName "1.0.1-Genesis"
 
@@ -115,10 +112,11 @@ defaultConfig {
         externalNativeBuild {
             cmake {
                 version '3.10.2'
-                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-21' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
+                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-21'
             }
         }
     }
+
 
     buildTypes {
         debug {
