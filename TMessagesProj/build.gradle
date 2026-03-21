@@ -135,6 +135,8 @@ android {
             buildConfigField "boolean", "BUILD_HOST_IS_WINDOWS", isWindows
             buildConfigField "int", "VERSION_NUM", "0"
         }
+    }
+}
 
         HA_private {
             jniDebuggable false
@@ -216,8 +218,8 @@ android {
             buildConfigField "boolean", "BUILD_HOST_IS_WINDOWS", isWindows
             buildConfigField "int", "VERSION_NUM", "7"
         }
-    }
-}
+    
+
 
 
 def getProps(String propName) {
@@ -227,7 +229,7 @@ def getProps(String propName) {
         props.load(new FileInputStream(propsFile))
         return props[propName]
     } else {
-        return ""
+        return "";
     }
 }
 apply plugin: 'com.google.gms.google-services'
