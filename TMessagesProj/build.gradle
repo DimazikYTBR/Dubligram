@@ -136,7 +136,7 @@ android {
             buildConfigField "int", "VERSION_NUM", "0"
         }
     }
-}
+
 
         HA_private {
             jniDebuggable false
@@ -218,7 +218,7 @@ android {
             buildConfigField "boolean", "BUILD_HOST_IS_WINDOWS", isWindows
             buildConfigField "int", "VERSION_NUM", "7"
         }
-    
+}
 
 
 
