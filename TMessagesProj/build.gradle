@@ -104,8 +104,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 35
         applicationId "org.dubligram.messenger"
-        versionCode 1
-        versionName "1.0.1-Genesis"
+        versionCode 2
+        versionName "1.0.2-Edit"
 
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
         multiDexEnabled true
