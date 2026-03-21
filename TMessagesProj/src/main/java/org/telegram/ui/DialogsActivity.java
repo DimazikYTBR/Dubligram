@@ -5261,10 +5261,26 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         undoView[0] = null;
         undoView[1] = null;
 
-        if (hasMainTabs) {
-            actionBar.getTitlesContainer().setTranslationX(dp(4));
-            actionBar.setTitleColor(getThemedColor(Theme.key_telegram_color_dialogsLogo));
-        }
+if (hasMainTabs) {
+    // 1. Устанавливаем твой заголовок "Chats"
+    actionBar.setTitle(LocaleController.getString("ChatTitle", R.string.ChatTitle));
+    
+    // 2. Делаем магию центровки
+    SimpleTextView titleView = actionBar.getTitleTextView();
+    if (titleView != null) {
+        titleView.setGravity(Gravity.CENTER);
+        // Растягиваем заголовок на всю ширину панели
+        android.widget.FrameLayout.LayoutParams lp = (android.widget.FrameLayout.LayoutParams) titleView.getLayoutParams();
+        lp.width = android.widget.FrameLayout.LayoutParams.MATCH_PARENT;
+        lp.gravity = Gravity.CENTER;
+        // Отступ 56dp справа компенсирует кнопку меню слева, чтобы центр был идеальным
+        lp.rightMargin = org.telegram.messenger.AndroidUtilities.dp(56);
+        titleView.setLayoutParams(lp);
+    }
+    
+    // Эту строку можно оставить, если хочешь сохранить фирменный цвет
+    actionBar.setTitleColor(getThemedColor(Theme.key_actionBarDefaultTitle));
+}
 
         if (folderId != 0) {
             viewPages[0].listView.setGlowColor(getThemedColor(Theme.key_windowBackgroundWhite));
