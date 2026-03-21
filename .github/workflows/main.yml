@@ -31,5 +31,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Dubligram-1.0.1-Genesis
-          path: TMessagesProj/build/outputs/apk/debug/*.apk
+          path: "**/build/outputs/apk/debug/*.apk"
           # После завершения файл появится во вкладке Artifacts
