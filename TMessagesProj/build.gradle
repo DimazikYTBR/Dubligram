@@ -99,16 +99,18 @@ android {
     }
 
 
-    defaultConfig {
-    minSdkVersion 21
-    targetSdkVersion 35
-    
-    // ДОБАВЛЯЕМ ЭТИ СТРОКИ:
-    versionCode 1
-    versionName "1.0.1-Genesis"
+defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 35
+        
+        // ВОТ ЭТА СТРОЧКА ОБЯЗАТЕЛЬНА:
+        applicationId "org.dubligram.messenger" 
+        
+        versionCode 1
+        versionName "1.0.1-Genesis"
 
-    vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
-    multiDexEnabled true
+        vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
+        multiDexEnabled true
 
         externalNativeBuild {
             cmake {
