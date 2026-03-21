@@ -218,7 +218,7 @@ android {
         }
     }
 
-    namespace 'org.telegram.messenger'
+    namespace 'org.dubligram.messenger'
     }
 
 
