@@ -123,6 +123,7 @@ import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.DialogObject;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.FileLoader;
+import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.ImageReceiver;
 import org.telegram.messenger.LiteMode;
@@ -171,6 +172,7 @@ import org.telegram.ui.BasePermissionsActivity;
 import org.telegram.ui.Business.BusinessLinksController;
 import org.telegram.ui.Business.QuickRepliesController;
 import org.telegram.ui.ChatActivity;
+import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.Forum.ForumUtilities;
 import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.Components.Premium.boosts.BoostRepository;
@@ -633,6 +635,7 @@ public class ChatActivityEnterView extends FrameLayout implements
     public FrameLayout sendButtonContainer;
     private ImageView sendOutlineView;
     public RichMessageLayout.PreviewView richDraftPreview;
+    private LinkPreviewPill linkPreviewPill;
     private boolean richDraftActive;
     private TL_iv.RichMessage richDraftMessage;
     @Nullable
@@ -4536,13 +4539,62 @@ public class ChatActivityEnterView extends FrameLayout implements
         return null;
     }
 
+    private class LinkPreviewPill extends FrameLayout {
+        private final BackupImageView linkImageView;
+        private final TextView linkTitleView;
+        private final TextView linkUrlView;
+
+        public LinkPreviewPill(Context context) {
+            super(context);
+
+            linkImageView = new BackupImageView(context);
+            linkImageView.setRoundRadius(dp(12));
+            addView(linkImageView, LayoutHelper.createFrame(50, 50, Gravity.LEFT | Gravity.TOP, 8, 8, 0, 0));
+
+            linkTitleView = new TextView(context);
+            linkTitleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            linkTitleView.setTypeface(AndroidUtilities.bold());
+            linkTitleView.setSingleLine();
+            linkTitleView.setEllipsize(TextUtils.TruncateAt.END);
+            linkTitleView.setGravity(Gravity.CENTER_HORIZONTAL);
+            linkTitleView.setTextColor(getThemedColor(Theme.key_glass_defaultIcon));
+            addView(linkTitleView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP, 66, 10, 12, 0));
+
+            linkUrlView = new TextView(context);
+            linkUrlView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+            linkUrlView.setSingleLine();
+            linkUrlView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
+            linkUrlView.setGravity(Gravity.CENTER_HORIZONTAL);
+            linkUrlView.setTextColor(ColorUtils.setAlphaComponent(getThemedColor(Theme.key_glass_defaultIcon), 170));
+            addView(linkUrlView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM, 66, 0, 12, 8));
+
+            setPadding(0, 0, 0, dp(6));
+        }
+
+        public void setWebPage(TLRPC.WebPage webPage) {
+            if (webPage == null) {
+                return;
+            }
+            String title = webPage.site_name != null ? webPage.site_name : (webPage.title != null ? webPage.title : webPage.url);
+            linkTitleView.setText(title);
+            linkUrlView.setText(webPage.url);
+
+            if (webPage.photo != null) {
+                TLRPC.PhotoSize photoSize = FileLoader.getClosestPhotoSizeWithSize(webPage.photo.sizes, 100);
+                linkImageView.setImage(ImageLocation.getForPhoto(photoSize, webPage.photo), "50_50", (Drawable) null, webPage);
+            } else {
+                linkImageView.setImageDrawable(null);
+            }
+        }
+    }
+
     public void drawBackground(Canvas canvas, boolean withComposeShadowDrawable) {
         if (!shouldDrawBackground) {
             return;
         }
 
         View leftView = firstVisible(attachButton, emojiButton);
-        View rightView = firstVisible(audioVideoButtonContainer, doneButton, cancelBotButton, slowModeButton, expandStickersButton);
+        View rightView = firstVisible(sendButton, audioVideoButtonContainer, doneButton, cancelBotButton, slowModeButton, expandStickersButton);
 
         float[] leftBounds = leftView != null ? getBoundsRelativeTo(leftView, this) : null;
         float[] rightBounds = rightView != null ? getBoundsRelativeTo(rightView, this) : null;
@@ -4565,6 +4617,22 @@ public class ChatActivityEnterView extends FrameLayout implements
         float middleRight = rightBounds[0] + pad - gap;
         glassShapeRect.set(middleLeft, fieldBounds[1], middleRight, fieldBounds[3]);
         drawGlassShape(canvas, glassShapeRect);
+
+        if (topView != null && topView.getVisibility() == View.VISIBLE && getTopViewEnterProgress() > 0.05f) {
+            float[] topBounds = getBoundsRelativeTo(topView, this);
+            if (topBounds != null) {
+                glassShapeRect.set(topBounds[0] + gap, topBounds[1] + pad, topBounds[2] - gap, topBounds[3] - pad);
+                drawGlassShape(canvas, glassShapeRect);
+            }
+        }
+
+        if (recordedAudioPanel != null && recordedAudioPanel.getVisibility() == View.VISIBLE && recordDeleteImageView != null) {
+            float[] deleteBounds = getBoundsRelativeTo(recordDeleteImageView, this);
+            if (deleteBounds != null) {
+                glassShapeRect.set(deleteBounds[0] + pad, deleteBounds[1] + pad, deleteBounds[2] - pad, deleteBounds[3] - pad);
+                drawGlassShape(canvas, glassShapeRect);
+            }
+        }
     }
 
     public float getVisualHeight() {
@@ -5577,6 +5645,10 @@ public class ChatActivityEnterView extends FrameLayout implements
         richDraftPreview.setPadding(dp(8), dp(9), dp(8), dp(10));
         richDraftPreview.setOnClickListener(v -> openRichEditor());
         messageEditTextContainer.addView(richDraftPreview, 2, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM, 52 - 8, 0, (isChat ? 50 : 2) - 8, 1.5f));
+
+        linkPreviewPill = new LinkPreviewPill(context);
+        linkPreviewPill.setVisibility(View.GONE);
+        messageEditTextContainer.addView(linkPreviewPill, 2, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP, 0, 0, 0, 0));
         messageEditText.setOnKeyListener(new OnKeyListener() {
 
             @Override
@@ -6697,6 +6769,14 @@ public class ChatActivityEnterView extends FrameLayout implements
     public void setWebPage(TLRPC.WebPage webPage, boolean searchWebPages) {
         messageWebPage = webPage;
         messageWebPageSearch = searchWebPages;
+        if (linkPreviewPill != null) {
+            if (webPage != null) {
+                linkPreviewPill.setWebPage(webPage);
+                linkPreviewPill.setVisibility(View.VISIBLE);
+            } else {
+                linkPreviewPill.setVisibility(View.GONE);
+            }
+        }
     }
 
     public boolean isMessageWebPageSearchEnabled() {
