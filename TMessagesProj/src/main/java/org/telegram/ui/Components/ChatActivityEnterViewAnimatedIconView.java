@@ -15,6 +15,7 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
     private State currentState;
     private TransitState animatingState;
     private final int sizeDp;
+    private float animationSpeed = 1.45f;
 
     private final Map<TransitState, RLottieDrawable> stateMap = new HashMap<TransitState, RLottieDrawable>() {
         @Nullable
@@ -41,6 +42,20 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
         this.sizeDp = sizeDp;
     }
 
+    public void setAnimationSpeed(float speed) {
+        animationSpeed = speed;
+        if (animatingState != null) {
+            RLottieDrawable drawable = stateMap.get(animatingState);
+            if (drawable != null) {
+                drawable.setSpeed(animationSpeed);
+            }
+        }
+    }
+
+    public float getAnimationSpeed() {
+        return animationSpeed;
+    }
+
     public void setState(State state, boolean animate) {
         if (animate && state == currentState) {
             return;
@@ -50,7 +65,7 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
         if (!animate || fromState == null || getState(fromState, currentState) == null) {
             RLottieDrawable drawable = stateMap.get(getAnyState(currentState));
             drawable.stop();
-
+            drawable.setSpeed(animationSpeed);
             drawable.setProgress(state == State.VOICE ? 0.5f : 0, false);
             setAnimation(drawable);
         } else {
@@ -62,6 +77,7 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
             animatingState = transitState;
             RLottieDrawable drawable = stateMap.get(transitState);
             drawable.stop();
+            drawable.setSpeed(animationSpeed);
             if (transitState == TransitState.VIDEO_TO_VOICE) {
                 drawable.setCustomEndFrame(30);
                 drawable.setProgress(0, false);

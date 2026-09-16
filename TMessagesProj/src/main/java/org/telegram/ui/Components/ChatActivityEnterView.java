@@ -4474,7 +4474,38 @@ public class ChatActivityEnterView extends FrameLayout implements
     private static final int GLASS_COLOR_TOP = 0xff3ee0d6;
     private static final int GLASS_COLOR_BASE = 0xff076863;
     private static final int GLASS_COLOR_DEEP = 0xff03403d;
-    private static final int GLASS_SHAPE_GAP = 8;
+    private static final int GLASS_SHAPE_GAP = 6;
+    private static final int GLASS_CIRCLE_SIZE = 34;
+    private static final int GLASS_PILL_HEIGHT = 34;
+
+    private BlurredBackgroundDrawableViewFactory glassBlurFactory;
+    private BlurredBackgroundColorProviderThemed glassBlurColorProvider;
+    private BlurredBackgroundDrawable glassBlurLeft;
+    private BlurredBackgroundDrawable glassBlurMiddle;
+    private BlurredBackgroundDrawable glassBlurRight;
+    private BlurredBackgroundDrawable glassBlurTop;
+    private BlurredBackgroundDrawable glassBlurDelete;
+
+    public void setGlassBlurFactory(BlurredBackgroundDrawableViewFactory factory) {
+        glassBlurFactory = factory;
+        if (glassBlurColorProvider == null) {
+            glassBlurColorProvider = new BlurredBackgroundColorProviderThemed(resourcesProvider, Theme.key_chat_messagePanelBackground);
+        }
+        glassBlurLeft = factory.create(this, glassBlurColorProvider);
+        glassBlurMiddle = factory.create(this, glassBlurColorProvider);
+        glassBlurRight = factory.create(this, glassBlurColorProvider);
+        glassBlurTop = factory.create(this, glassBlurColorProvider);
+        glassBlurDelete = factory.create(this, glassBlurColorProvider);
+        glassBlurLeft.setPadding(dp(2));
+        glassBlurMiddle.setPadding(dp(2));
+        glassBlurRight.setPadding(dp(2));
+        glassBlurTop.setPadding(dp(2));
+        glassBlurDelete.setPadding(dp(2));
+        if (glassBlurColorProvider != null) {
+            glassBlurColorProvider.updateColors();
+        }
+        invalidate();
+    }
     private float composeShadowAlpha = 1f;
     private Rect blurBounds = new Rect();
     @Override
@@ -4517,13 +4548,21 @@ public class ChatActivityEnterView extends FrameLayout implements
         }
     }
 
-    private void drawGlassShape(Canvas canvas, RectF rect) {
+    private void drawGlassShape(Canvas canvas, RectF rect, BlurredBackgroundDrawable blur) {
         if (rect.width() <= 0 || rect.height() <= 0) {
             return;
         }
         float radius = rect.height() / 2f;
-        updateGlassShader(rect.top, rect.bottom);
-        canvas.drawRoundRect(rect, radius, radius, backgroundPaint);
+
+        if (blur != null) {
+            blur.setRadius((int) radius);
+            blur.setBounds((int) rect.left, (int) rect.top, (int) rect.right, (int) rect.bottom);
+            blur.draw(canvas);
+        } else {
+            updateGlassShader(rect.top, rect.bottom);
+            canvas.drawRoundRect(rect, radius, radius, backgroundPaint);
+        }
+
         glassRimPaint.setStyle(Paint.Style.STROKE);
         glassRimPaint.setStrokeWidth(dp(1));
         glassRimPaint.setColor(ColorUtils.setAlphaComponent(GLASS_COLOR_TOP, 90));
@@ -4606,31 +4645,41 @@ public class ChatActivityEnterView extends FrameLayout implements
 
         float gap = dp(GLASS_SHAPE_GAP);
         float pad = dp(4);
+        float circleR = dp(GLASS_CIRCLE_SIZE) / 2f;
+        float pillH = dp(GLASS_PILL_HEIGHT);
 
-        glassShapeRect.set(leftBounds[0] - pad, leftBounds[1] - pad, leftBounds[2] + pad, leftBounds[3] + pad);
-        drawGlassShape(canvas, glassShapeRect);
+        float leftCx = (leftBounds[0] + leftBounds[2]) / 2f;
+        float leftCy = (leftBounds[1] + leftBounds[3]) / 2f;
+        glassShapeRect.set(leftCx - circleR, leftCy - circleR, leftCx + circleR, leftCy + circleR);
+        drawGlassShape(canvas, glassShapeRect, glassBlurLeft);
 
-        glassShapeRect.set(rightBounds[0] - pad, rightBounds[1] - pad, rightBounds[2] + pad, rightBounds[3] + pad);
-        drawGlassShape(canvas, glassShapeRect);
+        float rightCx = (rightBounds[0] + rightBounds[2]) / 2f;
+        float rightCy = (rightBounds[1] + rightBounds[3]) / 2f;
+        glassShapeRect.set(rightCx - circleR, rightCy - circleR, rightCx + circleR, rightCy + circleR);
+        drawGlassShape(canvas, glassShapeRect, glassBlurRight);
 
-        float middleLeft = leftBounds[2] - pad + gap;
-        float middleRight = rightBounds[0] + pad - gap;
-        glassShapeRect.set(middleLeft, fieldBounds[1], middleRight, fieldBounds[3]);
-        drawGlassShape(canvas, glassShapeRect);
+        float middleLeft = leftCx + circleR + gap;
+        float middleRight = rightCx - circleR - gap;
+        float pillBottom = fieldBounds[3] - (leftBounds[3] - leftCy - circleR);
+        float pillTop = Math.min(fieldBounds[1], pillBottom - pillH);
+        glassShapeRect.set(middleLeft, pillTop, middleRight, pillBottom);
+        drawGlassShape(canvas, glassShapeRect, glassBlurMiddle);
 
         if (topView != null && topView.getVisibility() == View.VISIBLE && getTopViewEnterProgress() > 0.05f) {
             float[] topBounds = getBoundsRelativeTo(topView, this);
             if (topBounds != null) {
-                glassShapeRect.set(topBounds[0] + gap, topBounds[1] + pad, topBounds[2] - gap, topBounds[3] - pad);
-                drawGlassShape(canvas, glassShapeRect);
+                glassShapeRect.set(middleLeft, topBounds[1] + pad, middleRight, topBounds[3] - pad);
+                drawGlassShape(canvas, glassShapeRect, glassBlurTop);
             }
         }
 
         if (recordedAudioPanel != null && recordedAudioPanel.getVisibility() == View.VISIBLE && recordDeleteImageView != null) {
             float[] deleteBounds = getBoundsRelativeTo(recordDeleteImageView, this);
             if (deleteBounds != null) {
-                glassShapeRect.set(deleteBounds[0] + pad, deleteBounds[1] + pad, deleteBounds[2] - pad, deleteBounds[3] - pad);
-                drawGlassShape(canvas, glassShapeRect);
+                float dCx = (deleteBounds[0] + deleteBounds[2]) / 2f;
+                float dCy = (deleteBounds[1] + deleteBounds[3]) / 2f;
+                glassShapeRect.set(dCx - circleR, dCy - circleR, dCx + circleR, dCy + circleR);
+                drawGlassShape(canvas, glassShapeRect, glassBlurDelete);
             }
         }
     }
