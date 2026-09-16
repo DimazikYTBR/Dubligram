@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.collection.LongSparseArray;
+import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -46,8 +47,12 @@ import java.util.ArrayList;
 
 public class BotCommandsMenuView extends View {
 
+    private static final int GLASS_BASE_COLOR = 0xff076863;
+    private static final int GLASS_RIM_COLOR = 0xff3ee0d6;
+
     final RectF rectTmp = new RectF();
     final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    final Paint rimPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     final MenuDrawable backDrawable = new MenuDrawable() {
         @Override
@@ -84,6 +89,9 @@ public class BotCommandsMenuView extends View {
         backgroundDrawable.setCallback(this);
         webViewAnimation.setCallback(this);
         webViewAnimation.setMasterParent(this);
+        rimPaint.setStyle(Paint.Style.STROKE);
+        rimPaint.setStrokeWidth(AndroidUtilities.dp(1));
+        rimPaint.setColor(ColorUtils.setAlphaComponent(GLASS_RIM_COLOR, 90));
         setContentDescription(getString("AccDescrBotMenu", R.string.AccDescrBotMenu));
     }
 
@@ -98,8 +106,8 @@ public class BotCommandsMenuView extends View {
     }
 
     private void updateColors() {
-        paint.setColor(Theme.getColor(Theme.key_chat_messagePanelVoiceBackground));
-        int textColor = Theme.getColor(Theme.key_chat_messagePanelVoiceDuration);
+        paint.setColor(GLASS_BASE_COLOR);
+        int textColor = Theme.getColor(Theme.key_glass_defaultIcon);
         backDrawable.setBackColor(textColor);
         backDrawable.setIconColor(textColor);
         if (webViewAnimation != null) {
@@ -161,6 +169,7 @@ public class BotCommandsMenuView extends View {
             if (drawBackgroundDrawable) {
                 rectTmp.set(0, 0, AndroidUtilities.dp(40) + (menuTextWidth + AndroidUtilities.dp(4)) * expandProgress, getMeasuredHeight());
                 canvas.drawRoundRect(rectTmp, AndroidUtilities.dp(16), AndroidUtilities.dp(16), paint);
+                canvas.drawRoundRect(rectTmp, AndroidUtilities.dp(16), AndroidUtilities.dp(16), rimPaint);
                 backgroundDrawable.setBounds((int) rectTmp.left, (int) rectTmp.top, (int) rectTmp.right, (int) rectTmp.bottom);
                 backgroundDrawable.draw(canvas);
             }
@@ -245,10 +254,6 @@ public class BotCommandsMenuView extends View {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//            FlickerLoadingView flickerLoadingView =  new FlickerLoadingView(parent.getContext());
-//            flickerLoadingView.setIsSingleCell(true);
-//            flickerLoadingView.setViewType(FlickerLoadingView.BOTS_MENU_TYPE);
-//            return new RecyclerListView.Holder(flickerLoadingView);
             BotCommandView view = new BotCommandView(parent.getContext());
             view.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             return new RecyclerListView.Holder(view);
@@ -260,7 +265,7 @@ public class BotCommandsMenuView extends View {
             final String command = newResult.get(position);
             final boolean ephemeral = newResultEphemeral.get(position);
 
-            if (ephemeral /*&& false*/) {
+            if (ephemeral) {
                 final ColoredImageSpan coloredImageSpan = new ColoredImageSpan(R.drawable.mini_ephemeral_hidden_14);
                 coloredImageSpan.setColorKey(Theme.key_windowBackgroundWhiteGrayText3);
                 coloredImageSpan.setTopOffset(1);

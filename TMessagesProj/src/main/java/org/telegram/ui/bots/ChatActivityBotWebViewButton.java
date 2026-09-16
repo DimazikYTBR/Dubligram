@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -24,7 +25,11 @@ public class ChatActivityBotWebViewButton extends FrameLayout {
     public final static SimpleFloatPropertyCompat<ChatActivityBotWebViewButton> PROGRESS_PROPERTY = new SimpleFloatPropertyCompat<>("progress", obj -> obj.progress, ChatActivityBotWebViewButton::setProgress)
             .setMultiplier(100f);
 
+    private static final int GLASS_BASE_COLOR = 0xff076863;
+    private static final int GLASS_RIM_COLOR = 0xff3ee0d6;
+
     private Path path = new Path();
+    private Paint rimPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private float progress;
     private int buttonColor = Theme.getColor(Theme.key_featuredStickers_addButton);
     private int backgroundColor;
@@ -59,6 +64,10 @@ public class ChatActivityBotWebViewButton extends FrameLayout {
         rippleView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_featuredStickers_addButtonPressed), 2));
         addView(rippleView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT, 0, 0, 0, 0));
 
+        rimPaint.setStyle(Paint.Style.STROKE);
+        rimPaint.setStrokeWidth(AndroidUtilities.dp(1));
+        rimPaint.setColor(ColorUtils.setAlphaComponent(GLASS_RIM_COLOR, 90));
+
         setWillNotDraw(false);
     }
 
@@ -73,7 +82,7 @@ public class ChatActivityBotWebViewButton extends FrameLayout {
         textView.setText(text);
         textView.setTextColor(textColor);
         buttonColor = color;
-        backgroundColor = ColorUtils.blendARGB(Theme.getColor(Theme.key_chat_messagePanelVoiceBackground), buttonColor, progress);
+        backgroundColor = ColorUtils.blendARGB(GLASS_BASE_COLOR, buttonColor, progress);
         rippleView.setBackground(Theme.createSelectorDrawable(BotWebViewContainer.getMainButtonRippleColor(buttonColor), 2));
         invalidate();
 
@@ -103,7 +112,7 @@ public class ChatActivityBotWebViewButton extends FrameLayout {
 
     public void setProgress(float progress) {
         this.progress = progress;
-        backgroundColor = ColorUtils.blendARGB(Theme.getColor(Theme.key_chat_messagePanelVoiceBackground), buttonColor, progress);
+        backgroundColor = ColorUtils.blendARGB(GLASS_BASE_COLOR, buttonColor, progress);
         for (int i = 0; i < getChildCount(); i++) {
             getChildAt(i).setAlpha(progress);
         }
@@ -127,6 +136,7 @@ public class ChatActivityBotWebViewButton extends FrameLayout {
         path.addRoundRect(AndroidUtilities.rectTmp, rad, rad, Path.Direction.CW);
         canvas.clipPath(path);
         canvas.drawColor(backgroundColor);
+        canvas.drawPath(path, rimPaint);
 
         canvas.saveLayerAlpha(AndroidUtilities.rectTmp, (int) ((1f - Math.min(0.5f, progress) / 0.5f) * 0xFF), Canvas.ALL_SAVE_FLAG);
         canvas.translate(AndroidUtilities.dp(10), menuY);
