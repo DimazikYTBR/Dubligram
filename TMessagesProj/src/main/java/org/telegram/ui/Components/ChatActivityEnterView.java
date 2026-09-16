@@ -5695,7 +5695,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         richDraftPreview.setOnClickListener(v -> openRichEditor());
         messageEditTextContainer.addView(richDraftPreview, 2, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM, 52 - 8, 0, (isChat ? 50 : 2) - 8, 1.5f));
 
-        linkPreviewPill = new LinkPreviewPill(context);
+        linkPreviewPill = new LinkPreviewPill(getContext());
         linkPreviewPill.setVisibility(View.GONE);
         messageEditTextContainer.addView(linkPreviewPill, 2, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP, 0, 0, 0, 0));
         messageEditText.setOnKeyListener(new OnKeyListener() {
