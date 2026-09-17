@@ -4628,6 +4628,7 @@ public class ChatActivityEnterView extends FrameLayout implements
     }
 
     public void drawBackground(Canvas canvas, boolean withComposeShadowDrawable) {
+        canvas.drawColor(0xFFFF00FF);
         if (!shouldDrawBackground) {
             return;
         }
