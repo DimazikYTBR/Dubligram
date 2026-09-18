@@ -4628,20 +4628,10 @@ public class ChatActivityEnterView extends FrameLayout implements
     }
 
     public void drawBackground(Canvas canvas, boolean withComposeShadowDrawable) {
-        if (!shouldDrawBackground) {
-            canvas.drawColor(0xFF000000);
-            return;
-        }
-
         View leftView = firstVisible(attachButton, emojiButton);
         View rightView = firstVisible(sendButton, audioVideoButtonContainer, doneButton, cancelBotButton, slowModeButton, expandStickersButton);
 
-        if (leftView == null) {
-            canvas.drawColor(0xFFFF0000);
-            return;
-        }
-        if (rightView == null) {
-            canvas.drawColor(0xFF00FF00);
+        if (leftView == null || rightView == null) {
             return;
         }
 
@@ -4649,20 +4639,9 @@ public class ChatActivityEnterView extends FrameLayout implements
         float[] rightBounds = getBoundsRelativeTo(rightView, this);
         float[] fieldBounds = messageEditTextContainer != null ? getBoundsRelativeTo(messageEditTextContainer, this) : null;
 
-        if (leftBounds == null) {
-            canvas.drawColor(0xFF0000FF);
+        if (leftBounds == null || rightBounds == null || fieldBounds == null) {
             return;
         }
-        if (rightBounds == null) {
-            canvas.drawColor(0xFFFFFF00);
-            return;
-        }
-        if (fieldBounds == null) {
-            canvas.drawColor(0xFF00FFFF);
-            return;
-        }
-
-        canvas.drawColor(0xFFFFFFFF);
 
         float gap = dp(GLASS_SHAPE_GAP);
         float pad = dp(4);
