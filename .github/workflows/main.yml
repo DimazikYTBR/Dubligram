@@ -38,6 +38,32 @@ jobs:
       - name: Install Android build tools
         run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0" "ndk;27.2.12479018" "cmake;3.22.1"
 
+      - name: Configure Firebase for NextoGram
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+        run: |
+          if [ -z "$GOOGLE_SERVICES_JSON_BASE64" ]; then
+            echo "::error::Add the base64-encoded Firebase config as the GOOGLE_SERVICES_JSON_BASE64 Actions secret."
+            exit 1
+          fi
+          printf '%s' "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > TMessagesProj_App/google-services.json
+          python3 - <<'PY'
+          import json
+          import sys
+
+          with open("TMessagesProj_App/google-services.json", encoding="utf-8") as config_file:
+              config = json.load(config_file)
+          packages = {
+              client.get("client_info", {}).get("android_client_info", {}).get("package_name")
+              for client in config.get("client", [])
+          }
+          required = {"io.nextogram.messenger"}
+          missing = required - packages
+          if missing:
+              print("::error::Firebase config is missing Android clients for: " + ", ".join(sorted(missing)))
+              sys.exit(1)
+          PY
+
       - name: Build regular client debug APK
         run: ./gradlew -Dorg.gradle.java.home="$JAVA_HOME" --no-daemon --no-parallel --max-workers=2 :TMessagesProj_App:assembleAfatDebug --stacktrace
 

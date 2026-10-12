@@ -55,6 +55,8 @@ The APK is written to `TMessagesProj_App/build/outputs/apk/afat/debug/app.apk`. 
 
 GitHub Actions builds this same variant on pushes and pull requests to `main` or `master`, and can also be started manually from the Actions tab. Download the `nextogram-regular-client-afat-debug` artifact from a successful workflow run to get the APK. The workflow checks out submodules and installs the required Android SDK, NDK, and CMake versions.
 
+The regular client and its debug build both use the single application ID `io.nextogram.messenger` (there is no separate beta ID). The CI build requires a Firebase `google-services.json` containing an Android client for that ID. Add its base64-encoded contents as the GitHub Actions repository secret `GOOGLE_SERVICES_JSON_BASE64` (for example, generate it on Linux with `base64 -w 0 TMessagesProj_App/google-services.json`). The workflow validates the package ID and writes the file only in the runner workspace; do not change package names in a Firebase config by hand.
+
 ### Localization
 
 We moved all translations to https://translations.telegram.org/en/android/. Please use it.
