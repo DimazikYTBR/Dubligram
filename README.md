@@ -41,6 +41,20 @@ You will require Android Studio 2025.1.4, Android NDK 27.2.12479018 and Android 
 6. Fill out values in TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java – there’s a link for each of the variables showing where and which data to obtain.
 7. You are ready to compile Telegram.
 
+### Building the regular Android client
+
+The default Gradle project includes the regular client (`TMessagesProj_App`) and the shared Telegram library. Huawei, HockeyApp, standalone, and test app modules are excluded from normal project configuration. To opt into those additional modules, pass `-PincludeAdditionalApps=true`.
+
+Install Android SDK Platform 36, Build Tools 36.0.0, NDK 27.2.12479018, and CMake 3.22.1, then point Gradle at your local SDK (for example, set `ANDROID_HOME` or add the SDK's path to an untracked `local.properties`). Build the regular debug APK with:
+
+```bash
+./gradlew :TMessagesProj_App:assembleAfatDebug
+```
+
+The APK is written to `TMessagesProj_App/build/outputs/apk/afat/debug/app.apk`. This is the standard Google Play-services client; it does not include Huawei services.
+
+GitHub Actions builds this same variant on pushes and pull requests to `main` or `master`, and can also be started manually from the Actions tab. Download the `nextogram-regular-client-afat-debug` artifact from a successful workflow run to get the APK. The workflow checks out submodules and installs the required Android SDK, NDK, and CMake versions.
+
 ### Localization
 
 We moved all translations to https://translations.telegram.org/en/android/. Please use it.

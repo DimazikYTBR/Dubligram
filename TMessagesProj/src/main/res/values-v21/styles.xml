@@ -15,11 +15,11 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:actionBarStyle">@style/ActionBar.Transparent.TMessages.Start</item>
-        <item name="android:colorBackground">@android:color/white</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:colorBackground">#050505</item>
+        <item name="android:windowBackground">#050505</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:colorPrimaryDark">#426482</item>
-        <item name="android:colorPrimary">#527da3</item>
+        <item name="android:colorPrimaryDark">#000000</item>
+        <item name="android:colorPrimary">#111111</item>
         <item name="android:navigationBarColor">#000000</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
         <item name="android:forceDarkAllowed">false</item>
@@ -30,17 +30,17 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBarOverlay">false</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:colorBackground">@android:color/white</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:colorBackground">#050505</item>
+        <item name="android:windowBackground">#050505</item>
         <item name="android:itemTextAppearance">@style/ActionBar.Transparent.TMessages.Item</item>
         <item name="android:listViewStyle">@style/Theme.TMessages.ListView</item>
         <item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_ex</item>
         <item name="android:actionBarItemBackground">@drawable/bar_selector_style</item>
-        <item name="android:colorPrimaryDark">#33000000</item>
-        <item name="android:colorPrimary">#527da3</item>
+        <item name="android:colorPrimaryDark">#000000</item>
+        <item name="android:colorPrimary">#111111</item>
         <item name="android:alertDialogTheme">@style/Theme.TMessages.Dialog.Alert</item>
-        <item name="android:colorControlActivated">#808080</item>
-        <item name="android:textColorHighlight">#60808080</item>
+        <item name="android:colorControlActivated">#D9D9D9</item>
+        <item name="android:textColorHighlight">#40808080</item>
         <item name="android:datePickerStyle">@style/Theme.TMessages.DatePicker</item>
         <item name="android:datePickerDialogTheme">@style/Theme.TMessages.Dialog.Alert</item>
         <item name="android:timePickerStyle">@style/Theme.TMessages.TimePicker</item>
@@ -57,16 +57,16 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBarOverlay">false</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:colorBackground">@android:color/black</item>
-        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorBackground">#050505</item>
+        <item name="android:windowBackground">#050505</item>
         <item name="android:itemTextAppearance">@style/ActionBar.Transparent.TMessages.Item</item>
         <item name="android:listViewStyle">@style/Theme.TMessages.ListView</item>
         <item name="android:actionBarItemBackground">@drawable/bar_selector_style</item>
-        <item name="android:colorPrimaryDark">#33000000</item>
-        <item name="android:colorPrimary">#527da3</item>
+        <item name="android:colorPrimaryDark">#000000</item>
+        <item name="android:colorPrimary">#111111</item>
         <item name="android:alertDialogTheme">@style/Theme.TMessages.Dark.Dialog.Alert</item>
-        <item name="android:colorControlActivated">#808080</item>
-        <item name="android:textColorHighlight">#60808080</item>
+        <item name="android:colorControlActivated">#D9D9D9</item>
+        <item name="android:textColorHighlight">#40808080</item>
         <item name="android:datePickerStyle">@style/Theme.TMessages.Dark.DatePicker</item>
         <item name="android:datePickerDialogTheme">@style/Theme.TMessages.Dark.Dialog.Alert</item>
         <item name="android:timePickerStyle">@style/Theme.TMessages.Dark.TimePicker</item>
@@ -90,27 +90,27 @@
     </style>
 
     <style name="Theme.TMessages.Dialog.Alert" parent="android:style/Theme.Material.Light.Dialog.Alert">
-        <item name="android:colorAccent">#4991cc</item>
-        <item name="android:colorPrimary">#527da3</item>
-        <item name="android:colorControlActivated">#808080</item>
+        <item name="android:colorAccent">#F5F5F5</item>
+        <item name="android:colorPrimary">#111111</item>
+        <item name="android:colorControlActivated">#D9D9D9</item>
     </style>
 
     <style name="Theme.CastDialog" parent="Theme.TMessages.Dark.Dialog.Alert">
         <item name="android:textColor">#FFFFFF</item>
-        <item name="colorPrimary">#222222</item>
-        <item name="android:colorBackground">#222222</item>
-        <item name="android:windowBackground">#222222</item>
-        <item name="android:panelBackground">#222222</item>
-        <item name="colorAccent">#4991cc</item>
+        <item name="colorPrimary">#111111</item>
+        <item name="android:colorBackground">#111111</item>
+        <item name="android:windowBackground">#111111</item>
+        <item name="android:panelBackground">#111111</item>
+        <item name="colorAccent">#F5F5F5</item>
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:backgroundDimAmount">0.5</item>
         <item name="dialogCornerRadius">16dp</item>
     </style>
 
     <style name="Theme.TMessages.Dark.Dialog.Alert" parent="android:style/Theme.Material.Dialog.Alert">
-        <item name="android:colorAccent">#4991cc</item>
-        <item name="android:colorPrimary">#527da3</item>
-        <item name="android:colorControlActivated">#808080</item>
+        <item name="android:colorAccent">#F5F5F5</item>
+        <item name="android:colorPrimary">#111111</item>
+        <item name="android:colorControlActivated">#D9D9D9</item>
     </style>
 
     <style name="Theme.TMessages.Transparent" parent="Theme.TMessages">

@@ -1,8 +1,12 @@
 include ':TMessagesProj'
 include ':TMessagesProj_App'
-include ':TMessagesProj_AppHuawei'
-include ':TMessagesProj_AppHockeyApp'
-include ':TMessagesProj_AppStandalone'
-include ':TMessagesProj_AppTests'
+include ':nextogram-demo'
 include ':jlatexmath'
 project(':jlatexmath').projectDir = file('TMessagesProj/lib/jlatexmath/jlatexmath')
+
+if (gradle.startParameter.projectProperties.get('includeAdditionalApps') == 'true') {
+    include ':TMessagesProj_AppHuawei'
+    include ':TMessagesProj_AppHockeyApp'
+    include ':TMessagesProj_AppStandalone'
+    include ':TMessagesProj_AppTests'
+}

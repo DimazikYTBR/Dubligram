@@ -1,0 +1,11 @@
+<resources>
+    <color name="bg_main">#050505</color>
+    <color name="bg_panel">#111213</color>
+    <color name="bg_surface">#1B1D20</color>
+    <color name="glass_overlay">#26FFFFFF</color>
+    <color name="white">#F5F5F5</color>
+    <color name="muted">#A7A7A7</color>
+    <color name="soft_border">#4DFFFFFF</color>
+    <color name="badge">#F2F2F2</color>
+    <color name="badge_text">#111111</color>
+</resources>

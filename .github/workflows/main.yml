@@ -10,6 +10,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,15 +30,18 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug --build-cache --stacktrace
+      - name: Install Android build tools
+        run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0" "ndk;27.2.12479018" "cmake;3.22.1"
+
+      - name: Build regular client debug APK
+        run: ./gradlew -Dorg.gradle.java.home="$JAVA_HOME" --no-daemon --no-parallel --max-workers=2 :TMessagesProj_App:assembleAfatDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
-          path: '**/*.apk'
-          if-no-files-found: warn
+          name: nextogram-regular-client-afat-debug
+          path: TMessagesProj_App/build/outputs/apk/afat/debug/app.apk
+          if-no-files-found: error
