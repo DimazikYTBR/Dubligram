@@ -124,6 +124,8 @@ import org.telegram.ui.Components.TextHelper;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 import org.telegram.ui.Components.UniversalRecyclerView;
+import org.telegram.ui.Components.glass.NextogramBackdropDrawable;
+import org.telegram.ui.Components.glass.NextogramGlassDrawable;
 import org.telegram.ui.Components.blur3.DownscaleScrollableNoiseSuppressor;
 import org.telegram.ui.Components.blur3.ViewGroupPartRenderer;
 import org.telegram.ui.Components.blur3.capture.IBlur3Capture;
@@ -290,6 +292,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                 SettingsActivity.this.updateColors();
             }
         };
+        contentView.setBackground(new NextogramBackdropDrawable(resourceProvider));
 
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
         actionBar.setAllowOverlayTitle(true);
@@ -349,6 +352,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
         listView = new UniversalRecyclerView(this, this::fillItems, this::onClick, this::onLongClick);
         listView.adapter.setApplyBackground(false);
+        listView.setBackgroundColor(Color.TRANSPARENT);
         listView.setSections();
         listView.setPadding(0, AndroidUtilities.statusBarHeight + dp(12), 0, AndroidUtilities.navigationBarHeight + additionNavigationBarHeight);
         listView.setClipToPadding(false);
@@ -551,7 +555,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
     public void updateColors() {
         actionBar.setTitleColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText));
         actionBar.setItemsColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText), false);
-        contentView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+        contentView.setBackground(new NextogramBackdropDrawable(resourceProvider));
         titleView.setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText));
         subtitleView.setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteGrayText));
         searchItem.updateColor();
@@ -1091,7 +1095,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
             @Override
             public AccountCell createView(Context context, RecyclerListView listView, int currentAccount, int classGuid, Theme.ResourcesProvider resourcesProvider) {
-                return new AccountCell(context, resourcesProvider);
+                AccountCell cell = new AccountCell(context, resourcesProvider);
+                cell.setBackground(NextogramGlassDrawable.createSelectable(resourcesProvider, 18f, 8f, 2f));
+                return cell;
             }
 
             @Override
@@ -1278,7 +1284,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
             @Override
             public SettingCell createView(Context context, RecyclerListView listView, int currentAccount, int classGuid, Theme.ResourcesProvider resourcesProvider) {
-                return new SettingCell(context, resourcesProvider);
+                SettingCell cell = new SettingCell(context, resourcesProvider);
+                cell.setBackground(NextogramGlassDrawable.createSelectable(resourcesProvider, 16f, 8f, 2f));
+                return cell;
             }
 
             @Override

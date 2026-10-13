@@ -54,6 +54,7 @@ import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.ArchiveHintCell;
 import org.telegram.ui.Cells.DialogCell;
+import org.telegram.ui.Components.glass.NextogramGlassDrawable;
 import org.telegram.ui.Cells.DialogMeUrlCell;
 import org.telegram.ui.Cells.DialogsEmptyCell;
 import org.telegram.ui.Cells.DialogsHintCell;
@@ -661,6 +662,13 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
                     view = new ProfileSearchCell(mContext);
                 } else {
                     DialogCell dialogCell = new DialogCell(parentFragment, mContext, true, false, currentAccount, null);
+                    if (dialogsType == DialogsActivity.DIALOGS_TYPE_DEFAULT
+                            && parentFragment != null
+                            && parentFragment.isMainDialogList()
+                            && !parentFragment.isArchive()
+                            && !parentFragment.isCommunity()) {
+                        dialogCell.setBackground(NextogramGlassDrawable.createSelectable(parentFragment.getResourceProvider(), 22f, 8f, 3f));
+                    }
                     if (showOpenBotButton()) {
                         dialogCell.allowBotOpenButton(true, this::onOpenBot);
                     }

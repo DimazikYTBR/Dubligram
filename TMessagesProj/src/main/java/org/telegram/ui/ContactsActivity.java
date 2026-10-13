@@ -111,6 +111,8 @@ import org.telegram.ui.Components.blur3.ViewGroupPartRenderer;
 import org.telegram.ui.Components.blur3.capture.IBlur3Capture;
 import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceRenderNode;
 import org.telegram.ui.Components.inset.WindowAnimatedInsetsProvider;
+import org.telegram.ui.Components.glass.NextogramBackdropDrawable;
+import org.telegram.ui.Components.glass.NextogramGlassDrawable;
 
 import java.util.ArrayList;
 
@@ -352,6 +354,9 @@ public class ContactsActivity extends BaseFragment implements FactorAnimator.Tar
         ActionBarMenu menu = actionBar.createMenu();
 
         searchItem = menu.addItem(search_button, R.drawable.outline_header_search);
+        if (hasMainTabs && !onlyUsers && !returnAsResult) {
+            searchItem.setBackground(NextogramGlassDrawable.createSelectable(resourceProvider, 24f, 0f, 0f));
+        }
         searchItem.setContentDescription(getString(R.string.SearchContacts));
 
         searchField.editText.addTextChangedListener(new SearchTextWatcher(searchField.editText, new ActionBarMenuItem.ActionBarMenuItemSearchListener() {
@@ -535,7 +540,9 @@ public class ContactsActivity extends BaseFragment implements FactorAnimator.Tar
             blur3_InvalidateBlur();
         }));
         listView.setSections(true);
-        contentView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+        contentView.setBackground(hasMainTabs && !onlyUsers && !returnAsResult
+                ? new NextogramBackdropDrawable(resourceProvider)
+                : new android.graphics.drawable.ColorDrawable(getThemedColor(Theme.key_windowBackgroundGray)));
 
         FlickerLoadingView flickerLoadingView = new FlickerLoadingView(context);
         flickerLoadingView.setViewType(FlickerLoadingView.PROFILE_SEARCH_CELL);
@@ -1452,7 +1459,9 @@ public class ContactsActivity extends BaseFragment implements FactorAnimator.Tar
                 actionBar.updateColors();
             }
             if (contentView != null) {
-                contentView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+                contentView.setBackground(hasMainTabs && !onlyUsers && !returnAsResult
+                        ? new NextogramBackdropDrawable(resourceProvider)
+                        : new android.graphics.drawable.ColorDrawable(getThemedColor(Theme.key_windowBackgroundGray)));
             }
         };
 

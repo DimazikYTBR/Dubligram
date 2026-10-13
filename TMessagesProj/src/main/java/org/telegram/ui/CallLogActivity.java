@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -95,6 +96,8 @@ import org.telegram.ui.Components.TextHelper;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 import org.telegram.ui.Components.UniversalRecyclerView;
+import org.telegram.ui.Components.glass.NextogramGlassDrawable;
+import org.telegram.ui.Components.glass.NextogramBackdropDrawable;
 import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory;
 import org.telegram.ui.Components.blur3.DownscaleScrollableNoiseSuppressor;
 import org.telegram.ui.Components.blur3.ViewGroupPartRenderer;
@@ -466,6 +469,7 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 		public CallCell(Context context, int currentAccount) {
 			super(context);
 			this.currentAccount = currentAccount;
+		setBackground(NextogramGlassDrawable.createSelectable(null, 18f, 8f, 2f));
 
 			profileSearchCell = new ProfileSearchCell(context);
 			profileSearchCell.setCallCellStyle();
@@ -624,6 +628,7 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 
 		public GroupCallCell(Context context) {
 			super(context);
+		setBackground(NextogramGlassDrawable.createSelectable(null, 18f, 8f, 2f));
 
 			String text = getString(R.string.VoipChatJoin);
 			button = new ProgressButton(context);
@@ -751,7 +756,7 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 		otherItem.setOnClickListener(v -> showItemOptions());
 
 		listView = new UniversalRecyclerView(this, this::fillItems, this::onClick, this::onLongClick);
-		listView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray, resourceProvider));
+		listView.setBackgroundColor(hasMainTabs ? Color.TRANSPARENT : Theme.getColor(Theme.key_windowBackgroundGray, resourceProvider));
 		listView.setSections();
 		listView.adapter.setApplyBackground(false);
 		contentView = new SizeNotifierFrameLayout(context) {
@@ -834,7 +839,9 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 		}));
 
 		fragmentView = contentView;
-		fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
+		fragmentView.setBackground(hasMainTabs
+				? new NextogramBackdropDrawable(resourceProvider)
+				: new android.graphics.drawable.ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray, resourceProvider)));
 
 		flickerLoadingView = new FlickerLoadingView(context);
 		flickerLoadingView.setViewType(FlickerLoadingView.CALL_LOG_TYPE);

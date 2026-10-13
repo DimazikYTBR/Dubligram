@@ -226,6 +226,8 @@ import org.telegram.ui.Components.DialogsItemAnimator;
 import org.telegram.ui.Components.FilterTabsView;
 import org.telegram.ui.Components.FiltersListBottomSheet;
 import org.telegram.ui.Components.FlickerLoadingView;
+import org.telegram.ui.Components.glass.NextogramGlassDrawable;
+import org.telegram.ui.Components.glass.NextogramBackdropDrawable;
 import org.telegram.ui.Components.FloatingDebug.FloatingDebugController;
 import org.telegram.ui.Components.FloatingDebug.FloatingDebugProvider;
 import org.telegram.ui.Components.FolderBottomSheet;
@@ -3252,8 +3254,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         });
         if (initialDialogsType == DIALOGS_TYPE_ADD_USERS_TO || isArchive() && getDialogsArray(currentAccount, initialDialogsType, folderId, false).isEmpty()) {
             searchItem.setVisibility(View.GONE);
+        } else if (!onlySelect && initialDialogsType == DIALOGS_TYPE_DEFAULT && folderId == 0 && communityId == 0) {
+            searchItem.setBackground(NextogramGlassDrawable.createSelectable(resourceProvider, 24f, 0f, 0f));
         }
-        searchItem.setVisibility(View.GONE);
 
         if (!onlySelect && searchString == null && folderId == 0 && communityId == 0) {
             doneItem = new ActionBarMenuItem(context, null, getThemedColor(Theme.key_actionBarDefaultSelector), getThemedColor(Theme.key_actionBarDefaultIcon), true);
@@ -3517,13 +3520,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             } else {
                 statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, dp(26));
                 statusDrawable.center = true;
-                logoDrawable = context.getResources().getDrawable(R.drawable.telegram_logo_2).mutate();
-                logoDrawable.setBounds(0, dp(2), logoDrawable.getIntrinsicWidth(), dp(2) + logoDrawable.getIntrinsicHeight());
-                logoDrawable.setColorFilter(getThemedColor(Theme.key_telegram_color_dialogsLogo), PorterDuff.Mode.MULTIPLY);
-                SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.AppName));
-                ssb.setSpan(new ImageSpan(logoDrawable), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                actionBar.setTitle(ssb, statusDrawable);
+                actionBar.centerTitle();
+                actionBar.setTitle(LocaleController.getString(R.string.Chats), statusDrawable);
                 updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
+                if (hasMainTabs && initialDialogsType == DIALOGS_TYPE_DEFAULT) {
+                    ActionBarMenuItem editFoldersItem = new ActionBarMenuItem(context, null, getThemedColor(Theme.key_actionBarDefaultSelector), getThemedColor(Theme.key_actionBarDefaultIcon), true);
+                    editFoldersItem.setText(LocaleController.getString(R.string.Edit));
+                    editFoldersItem.setBackground(NextogramGlassDrawable.createSelectable(resourceProvider, 18f, 7f, 4f));
+                    editFoldersItem.setContentDescription(LocaleController.getString(R.string.FilterEditAll));
+                    editFoldersItem.setOnClickListener(v -> presentFragment(new FiltersSetupActivity()));
+                    actionBar.addView(editFoldersItem, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 36, Gravity.LEFT | Gravity.CENTER_VERTICAL, 8, 0, 0, 0));
+                }
             }
             if (folderId == 0) {
                 actionBar.setSupportsHolidayImage(true);
@@ -4019,6 +4026,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         });
 
         ContentView contentView = new ContentView(context);
+        if (!onlySelect && initialDialogsType == DIALOGS_TYPE_DEFAULT && folderId == 0 && communityId == 0) {
+            contentView.setBackground(new NextogramBackdropDrawable(resourceProvider));
+        }
         fragmentView = contentView;
 
         viewPositionWatcher = new ViewPositionWatcher(contentView);

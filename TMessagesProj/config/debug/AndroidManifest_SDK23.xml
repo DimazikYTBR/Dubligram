@@ -27,9 +27,9 @@
 
 
     <application
-        android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="@string/AppNameBeta"
+        android:icon="@drawable/nextogram_launcher_icon"
+        android:roundIcon="@drawable/nextogram_launcher_icon"
+        android:label="@string/AppName"
         android:theme="@style/Theme.TMessages.Start"
         android:hardwareAccelerated="true"
         android:largeHeap="true"

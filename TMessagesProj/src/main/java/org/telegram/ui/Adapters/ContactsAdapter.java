@@ -47,6 +47,7 @@ import org.telegram.ui.Components.CombinedDrawable;
 import org.telegram.ui.Components.ContactsEmptyView;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
+import org.telegram.ui.Components.glass.NextogramGlassDrawable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -426,6 +427,9 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
         switch (viewType) {
             case INVITE_CELL: {
                 view = new InviteUserCell(mContext, false);
+                if (isMainContactsScreen()) {
+                    view.setBackground(NextogramGlassDrawable.createSelectable(fragment.getResourceProvider(), 18f, 8f, 2f));
+                }
                 break;
             }
             case HEADER_CELL: {
@@ -449,6 +453,9 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
             case USER_CELL: {
                 UserCell cell = new UserCell(mContext, 58, 1, false);
                 cell.setCallCellStyle(58);
+                if (isMainContactsScreen()) {
+                    cell.setBackground(NextogramGlassDrawable.createSelectable(fragment.getResourceProvider(), 18f, 8f, 2f));
+                }
                 view = cell;
                 break;
             }
@@ -509,6 +516,11 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
 
         }
         return new RecyclerListView.Holder(view);
+    }
+
+    private boolean isMainContactsScreen() {
+        return fragment instanceof org.telegram.ui.ContactsActivity
+                && ((org.telegram.ui.ContactsActivity) fragment).hasMainTabs;
     }
 
     @Override
