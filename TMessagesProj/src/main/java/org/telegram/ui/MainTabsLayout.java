@@ -286,7 +286,7 @@ public class MainTabsLayout extends AnimatedLinearLayout {
     private void setSkipDrawSelector(boolean skipDrawSelector) {
         drawCustomSelector = skipDrawSelector;
         if (drawCustomSelector) {
-            selectorPaint.setColor(Theme.multAlpha(Theme.getColor(Theme.key_glass_tabSelected, resourcesProvider), 0.09f));
+            selectorPaint.setColor(Theme.multAlpha(Theme.getColor(Theme.key_glass_tabSelected, resourcesProvider), 0.15f));
         }
         for (int a = 0, N = getChildCount(); a < N; a++) {
             final View child = getChildAt(a);
@@ -311,12 +311,14 @@ public class MainTabsLayout extends AnimatedLinearLayout {
     protected void dispatchDraw(@NonNull Canvas canvas) {
         if (drawCustomSelector) {
             final float x = animatedLongSelectedViewCenterX + animatedLongSelectedViewOffsetX;
-            final float sWidth = getInterpolatedWidthByX(x, this);
-            final float sHeight = getHeight() - getPaddingTop() - getPaddingBottom();
+            final float sWidth = getInterpolatedWidthByX(x, this) - dp(8);
+            final float sHeight = getHeight() - getPaddingTop() - getPaddingBottom() - dp(6);
+            final float top = getPaddingTop() + dp(3);
+            final float bottom = getHeight() - getPaddingBottom() - dp(3);
 
             canvas.drawRoundRect(
-                    x - sWidth / 2f, (getHeight() - sHeight) / 2f,
-                    x + sWidth / 2f, (getHeight() + sHeight) / 2f,
+                    x - sWidth / 2f, top,
+                    x + sWidth / 2f, bottom,
                     sHeight / 2f, sHeight / 2f, selectorPaint);
         }
 

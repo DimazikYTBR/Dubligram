@@ -3255,7 +3255,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (initialDialogsType == DIALOGS_TYPE_ADD_USERS_TO || isArchive() && getDialogsArray(currentAccount, initialDialogsType, folderId, false).isEmpty()) {
             searchItem.setVisibility(View.GONE);
         } else if (!onlySelect && initialDialogsType == DIALOGS_TYPE_DEFAULT && folderId == 0 && communityId == 0) {
-            searchItem.setBackground(NextogramGlassDrawable.createSelectable(resourceProvider, 24f, 0f, 0f));
+            searchItem.setBackground(NextogramGlassDrawable.createSelectable(resourceProvider, 24f, 3f, 3f));
         }
 
         if (!onlySelect && searchString == null && folderId == 0 && communityId == 0) {
@@ -5169,7 +5169,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             filterTabsViewBackground.setPadding(dp(6.666f));
             filterTabsView.setPadding(0, dp(7), 0, dp(7));
             filterTabsView.setBlurredBackground(filterTabsViewBackground);
-            contentView.addView(filterTabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36 + 7 + 7, Gravity.TOP, 4, 0, 4, 0));
+            contentView.addView(filterTabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36 + 7 + 7, Gravity.TOP, 8, 0, 8, 0));
         }
 
         if (fragmentSearchField != null) {
@@ -5361,7 +5361,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         if (hasMainTabs) {
             actionBar.getTitlesContainer().setTranslationX(dp(4));
-            actionBar.setTitleColor(getThemedColor(Theme.key_telegram_color_dialogsLogo));
+            actionBar.setTitleColor(getThemedColor(Theme.key_actionBarDefaultTitle));
         }
 
         if (folderId != 0 || communityId != 0) {
@@ -7474,6 +7474,20 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     private void showSearch(boolean show, boolean startFromDownloads, boolean animated) {
         showSearch(show, startFromDownloads, animated, false);
+    }
+
+    public void openSearchFromMainTabs() {
+        if (fragmentSearchField == null || searchItem == null) {
+            return;
+        }
+        showSearch(true, false, true);
+        fragmentSearchFieldWatcher.toggleSearch(true);
+        AndroidUtilities.runOnUIThread(() -> {
+            if (fragmentSearchField != null) {
+                fragmentSearchField.editText.requestFocus();
+                AndroidUtilities.showKeyboard(fragmentSearchField.editText);
+            }
+        }, 100);
     }
 
     private void showSearch(boolean show, boolean startFromDownloads, boolean animated, boolean forceNotOnlyDialogs) {
@@ -12154,7 +12168,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 arrayList.add(new ThemeDescription(searchViewPager.searchListView, ThemeDescription.FLAG_LISTGLOWCOLOR, null, null, null, null, Theme.key_windowBackgroundWhite));
             }
             arrayList.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_ITEMSCOLOR, null, null, null, cellDelegate, Theme.key_actionBarDefaultIcon));
-            arrayList.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_TITLECOLOR, null, null, new Drawable[]{Theme.dialogs_holidayDrawable}, null, !hasMainTabs ? Theme.key_actionBarDefaultTitle : Theme.key_telegram_color_dialogsLogo));
+            arrayList.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_TITLECOLOR, null, null, new Drawable[]{Theme.dialogs_holidayDrawable}, null, Theme.key_actionBarDefaultTitle));
             arrayList.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_SELECTORCOLOR, null, null, null, null, Theme.key_actionBarDefaultSelector));
             arrayList.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_SEARCH, null, null, null, null, Theme.key_actionBarDefaultSearch));
             arrayList.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_SEARCHPLACEHOLDER, null, null, null, null, Theme.key_actionBarDefaultSearchPlaceholder));

@@ -55,6 +55,7 @@ import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem;
+import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.EdgeToEdgeSupportMode;
 import org.telegram.ui.ActionBar.Theme;
@@ -115,8 +116,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
     private UpdateLayoutWrapper updateLayoutWrapper;
     private FrameLayout tabsViewWrapper;
+    private ActionBarMenuItem mainTabsSearchItem;
     private MainTabsLayout tabsView;
     private BlurredBackgroundDrawable tabsViewBackground;
+    private BlurredBackgroundDrawable mainTabsSearchBackground;
     private View fadeView;
 
     public MainTabsActivity() {
@@ -379,7 +382,23 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
         tabsViewWrapper = new FrameLayout(context);
         tabsViewWrapper.setOnClickListener(v -> {});
-        tabsViewWrapper.addView(tabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
+        LinearLayout tabsRow = new LinearLayout(context);
+        tabsRow.setOrientation(LinearLayout.HORIZONTAL);
+        tabsRow.setGravity(Gravity.CENTER);
+        tabsRow.setClipChildren(false);
+        tabsRow.setClipToPadding(false);
+        tabsRow.addView(tabsView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS));
+
+        mainTabsSearchItem = new ActionBarMenuItem(context, null, getThemedColor(Theme.key_actionBarDefaultSelector), getThemedColor(Theme.key_actionBarDefaultIcon), true, resourceProvider);
+        mainTabsSearchItem.setIcon(R.drawable.outline_header_search);
+        mainTabsSearchItem.setContentDescription(getString(R.string.Search));
+        mainTabsSearchBackground = iBlur3FactoryGlass.create(mainTabsSearchItem, BlurredBackgroundProviderImpl.mainTabs(resourceProvider));
+        mainTabsSearchBackground.setRadius(dp(24));
+        mainTabsSearchBackground.setPadding(dp(1));
+        mainTabsSearchItem.setBackground(mainTabsSearchBackground);
+        mainTabsSearchItem.setOnClickListener(v -> openMainTabsSearch());
+        tabsRow.addView(mainTabsSearchItem, LayoutHelper.createLinear(48, 48, Gravity.CENTER_VERTICAL, 6, 0, 0, 0));
+        tabsViewWrapper.addView(tabsRow, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 8, 0, 8, 0));
         tabsViewWrapper.setClipToPadding(false);
         contentView.addView(tabsViewWrapper, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM));
 
@@ -400,13 +419,29 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         if (tabsView == null) {
             return;
         }
-
         final int unreadCount = MessagesStorage.getInstance(currentAccount).getMainUnreadCount();
         if (unreadCount > 0) {
             final String unreadCountFmt = LocaleController.formatNumber(unreadCount, ',');
             tabs[INDEX_CHATS].setCounter(unreadCountFmt, false, animated);
         } else {
             tabs[INDEX_CHATS].setCounter(null, false, animated);
+        }
+    }
+
+    private void openMainTabsSearch() {
+        if (dialogsActivity == null) {
+            return;
+        }
+        if (viewPager.getCurrentPosition() != POSITION_CHATS) {
+            selectTab(POSITION_CHATS, true);
+            viewPager.scrollToPosition(POSITION_CHATS);
+            AndroidUtilities.runOnUIThread(() -> {
+                if (dialogsActivity != null) {
+                    dialogsActivity.openSearchFromMainTabs();
+                }
+            }, 300);
+        } else {
+            dialogsActivity.openSearchFromMainTabs();
         }
     }
 
@@ -1089,6 +1124,11 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         tabsView.setEnabled(factor > 1);
         tabsView.setAlpha(factor);
         tabsView.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
+        if (mainTabsSearchItem != null) {
+            mainTabsSearchItem.setEnabled(factor > 1);
+            mainTabsSearchItem.setAlpha(factor);
+            mainTabsSearchItem.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void checkUi_callTabVisible(boolean callTabsVisible, boolean animated) {
@@ -1221,6 +1261,12 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         blur3_updateFadeColors();
         if (tabsViewBackground != null) {
             tabsViewBackground.updateColors();
+        }
+        if (mainTabsSearchItem != null) {
+            mainTabsSearchItem.setIconColor(getThemedColor(Theme.key_actionBarDefaultIcon));
+        }
+        if (mainTabsSearchBackground != null) {
+            mainTabsSearchBackground.updateColors();
         }
         blur3_invalidateBlur();
         if (fadeView != null) {

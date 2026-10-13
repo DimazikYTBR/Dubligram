@@ -154,8 +154,8 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
         if (selectedFactor > 0 && !skipDrawSelector) {
             final float alpha = AnimatorUtils.DECELERATE_INTERPOLATOR.getInterpolation(selectedFactor);
 
-            paintCounterBackground.setColor(Theme.multAlpha(colorSelected, 0.09f * alpha));
-            tmpRectF.set(0, 0, viewWidth, getHeight());
+            paintCounterBackground.setColor(Theme.multAlpha(colorSelected, 0.15f * alpha));
+            tmpRectF.set(dp(4), dp(3), viewWidth - dp(4), getHeight() - dp(3));
             final float r = Math.min(tmpRectF.width(), tmpRectF.height()) / 2f;
             final float s = lerp(0.6f, 1, selectedFactor) * MathUtils.clamp(attachScale, 0, 1);
             canvas.save();
